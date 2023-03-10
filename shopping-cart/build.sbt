@@ -14,6 +14,7 @@ lazy val root = project
     libraryDependencies ++= Seq(
       Libraries.cats,
       Libraries.catsEffect,
+      Libraries.catsRetry,
       Libraries.circeCore,
       Libraries.circeGeneric,
       Libraries.circeParser,
