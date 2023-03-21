@@ -1,4 +1,4 @@
-package effects
+package shop.effects
 
 import cats.effect.syntax.*
 import cats.syntax.all.*

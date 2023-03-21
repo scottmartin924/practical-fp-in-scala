@@ -8,6 +8,8 @@ object Dependencies {
     val catsRetry = "3.1.0"
     val circe = "0.14.5"
     val fs2 = "3.0.3"
+    val http4s = "0.23.18"
+    val http4sJwt = "1.0.0"
     val monocle = "3.0.0"
     val munit = "0.7.29"
     val refined = "0.10.2"
@@ -19,6 +21,9 @@ object Dependencies {
     def circe(artifactName: String) =
       "io.circe" %% artifactName % Version.circe
 
+    def http4s(artifactName: String) =
+      "org.http4s" %% s"http4s-$artifactName" % Version.http4s
+
     val cats = "org.typelevel" %% "cats-core" % Version.cats
     val catsEffect = "org.typelevel" %% "cats-effect" % Version.catsEffect
     val catsMtl = "org.typelevel" %% "cats-mtl" % Version.catsMtl
@@ -27,6 +32,11 @@ object Dependencies {
     val circeGeneric = circe("circe-generic")
     val circeParser = circe("circe-parser")
     val fs2 = "co.fs2" %% "fs2-core" % Version.fs2
+    val http4sDsl = http4s("dsl")
+    val http4sServer = http4s("ember-server")
+    val http4sClient = http4s("ember-client")
+    val http4sCirce = http4s("circe")
+    val http4sJwt = ""
     val monocle = "dev.optics" %% "monocle-core" % Version.monocle
     val monocleMacro = "dev.optics" %% "monocle-macro" % Version.monocle
     val refined = "eu.timepit" %% "refined" % Version.refined

@@ -27,11 +27,11 @@ import shop.domain.payment.*
 import shop.domain.payment.OrderError
 import squants.market.Money
 import cats.effect.Temporal
-import effects.Background
 import retry.RetryPolicy
 import retry.RetryDetails
 import retry.RetryDetails.WillDelayAndRetry
 import org.typelevel.log4cats.Logger
+import shop.effects.Background
 
 final case class Checkout[
     F[_]: MonadThrow: Retry: Logger: Temporal: Background

@@ -1,5 +1,16 @@
-@main def hello: Unit = 
-  println("Hello world!")
-  println(msg)
+import cats.effect.{ExitCode, IO, IOApp}
+import com.comcast.ip4s.{ipv4, port}
+import org.http4s.ember.server.EmberServerBuilder
+import shop.http.routes.HelloWorldRoutes
 
-def msg = "I was compiled by Scala 3. :)"
+object Main extends IOApp.Simple {
+  // FIXME Make port configurable
+  override def run: IO[Unit] = EmberServerBuilder
+    .default[IO]
+    .withHost(ipv4"0.0.0.0")
+    .withPort(port"8080")
+    .withHttpApp(HelloWorldRoutes.httpRoutes)
+    .build
+    .use(_ => IO.never)
+    .as(ExitCode.Success)
+}
