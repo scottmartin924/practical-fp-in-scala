@@ -17,4 +17,5 @@ object payment {
   // FIXME just a placeholder shouldn't be here
   trait PaymentOrOrderError extends NoStackTrace
   case class PaymentError(error: String) extends PaymentOrOrderError
+  case class OrderError(error: String) extends PaymentOrOrderError
 }

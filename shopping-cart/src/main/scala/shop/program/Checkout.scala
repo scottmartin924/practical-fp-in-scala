@@ -7,23 +7,35 @@ import cats.Monad
 import shop.domain.user.UserId
 import shop.domain.order.OrderId
 import shop.domain.payment.Card
-import cats.syntax.all._
+import cats.syntax.all.*
 import shop.domain.cart.CartItem
 import cats.data.NonEmptyList
 import cats.MonadThrow
+import org.typelevel.log4cats.Logger
+
 import scala.util.control.NoStackTrace
 import shop.program.Checkout.EmptyCartError
 import shop.domain.payment.Payment
 import shop.domain.order.PaymentId
-import retry._
-import retry.RetryPolicies._
-import concurrent.duration._
+import retry.*
+import retry.RetryPolicies.*
+
+import concurrent.duration.*
 import shop.retry.Retry
 import shop.retry.Retriable
-import shop.domain.payment._
+import shop.domain.payment.*
+import shop.domain.payment.OrderError
 import squants.market.Money
+import cats.effect.Temporal
+import effects.Background
+import retry.RetryPolicy
+import retry.RetryDetails
+import retry.RetryDetails.WillDelayAndRetry
+import org.typelevel.log4cats.Logger
 
-final case class Checkout[F[_]: MonadThrow: Retry](
+final case class Checkout[
+    F[_]: MonadThrow: Retry: Logger: Temporal: Background
+](
     payments: PaymentClient[F],
     cartService: ShoppingCartService[F],
     orders: OrderService[F]
@@ -35,18 +47,31 @@ final case class Checkout[F[_]: MonadThrow: Retry](
   private def processPayment(in: Payment): F[PaymentId] = Retry[F]
     .retry(retryPolicy, Retriable.Payments)(payments.process(in))
     .adaptError { case err =>
-      // FIXME Map to custom error type
       PaymentError(Option(err.getMessage).getOrElse("UNKNOWN"))
     }
 
-  // private def createOrder(
-  //     usrId: UserId,
-  //     paymentId: PaymentId,
-  //     items: NonEmptyList[CartItem],
-  //     total: Money
-  // ): F[OrderId] = {
-  //   val
-  // }
+  private def createOrder(
+      userId: UserId,
+      paymentId: PaymentId,
+      items: NonEmptyList[CartItem],
+      total: Money
+  ): F[OrderId] = {
+    val action = Retry[F]
+      .retry(retryPolicy, Retriable.Orders)(
+        orders.create(userId, paymentId, items, total)
+      )
+      .adaptError { case e =>
+        OrderError(e.getMessage)
+      }
+
+    def bgAction(fa: F[OrderId]): F[OrderId] = fa.onError { case _ =>
+      Logger[F].error(
+        s"Failed to create order for $paymentId"
+      ) *> Background[F].schedule(bgAction(fa), 1.hour)
+    }
+
+    bgAction(action)
+  }
 
   def process(userId: UserId, card: Card): F[OrderId] = {
 
