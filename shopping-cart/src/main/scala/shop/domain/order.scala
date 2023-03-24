@@ -1,16 +1,15 @@
 package shop.domain
 
-import java.util.UUID
-import squants.market.Money
-import shop.domain.item.ItemId
+import io.estatico.newtype.macros.newtype
 import shop.domain.cart.Quantity
+import shop.domain.item.ItemId
+import squants.market.Money
+
+import java.util.UUID
 
 object order {
-  object OrderId extends NewType[UUID]
-  type OrderId = OrderId.Type
-
-  object PaymentId extends NewType[UUID]
-  type PaymentId = PaymentId.Type
+  @newtype case class OrderId(value: UUID)
+  @newtype case class PaymentId(value: UUID)
 
   case class Order(
       id: OrderId,

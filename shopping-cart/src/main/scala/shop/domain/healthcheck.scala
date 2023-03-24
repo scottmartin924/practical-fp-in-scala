@@ -1,16 +1,13 @@
 package shop.domain
 
-import java.io.ObjectInputFilter.Status
-import monocle.Iso
 import io.circe.Encoder
+import io.estatico.newtype.macros.newtype
+import monocle.Iso
 
 object healthcheck {
 
-  object RedisStatus extends NewType[Status]
-  type RedisStatus = RedisStatus.Type
-
-  object PostgresStatus extends NewType[Status]
-  type PostgresStatus = PostgresStatus.Type
+  @newtype case class RedisStatus(value: Status)
+  @newtype case class PostgresStatus(value: Status)
 
   case class AppStatus(redis: RedisStatus, postgres: PostgresStatus)
 
@@ -25,5 +22,5 @@ object healthcheck {
     }(if (_) Okay else Unreachable)
   }
 
-  given encoder: Encoder[Status] = Encoder.forProduct1("status")(_.toString())
+  implicit val encoder: Encoder[Status] = Encoder.forProduct1("status")(_.toString())
 }

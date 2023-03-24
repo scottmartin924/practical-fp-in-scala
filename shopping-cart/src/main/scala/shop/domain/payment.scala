@@ -11,7 +11,7 @@ object payment {
       card: Card
   )
 
-  // FIXME Just here as a placeholder until create implentation
+  // FIXME Just here as a placeholder until create implementation
   case class Card()
 
   // FIXME just a placeholder shouldn't be here

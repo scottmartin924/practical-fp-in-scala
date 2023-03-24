@@ -13,9 +13,9 @@ trait Retry[F[_]] {
 }
 
 object Retry {
-  def apply[F[_]: Retry]: Retry[F] = summon[Retry[F]]
+  def apply[F[_]: Retry]: Retry[F] = implicitly
 
-  given retryWithLogger[F[_]: Logger: Temporal]: Retry[F] = new Retry[F] {
+  implicit def retryWithLogger[F[_]: Logger: Temporal]: Retry[F] = new Retry[F] {
     override def retry[A](policy: RetryPolicy[F], retriable: Retriable)(
         f: F[A]
     ): F[A] = {

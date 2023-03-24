@@ -1,5 +1,5 @@
 import cats.effect.{ExitCode, IO, IOApp}
-import com.comcast.ip4s.{ipv4, port}
+import com.comcast.ip4s.IpLiteralSyntax
 import org.http4s.ember.server.EmberServerBuilder
 import shop.http.routes.HelloWorldRoutes
 

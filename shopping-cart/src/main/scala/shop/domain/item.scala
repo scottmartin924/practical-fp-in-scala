@@ -1,22 +1,16 @@
 package shop.domain
 
-import java.util.UUID
+import io.estatico.newtype.macros.newtype
+import shop.domain.brand.{Brand, BrandId}
+import shop.domain.category.{Category, CategoryId}
 import squants.market.Money
 
-import shop.domain.brand.{BrandId, Brand}
-
-import shop.domain.category.{CategoryId, Category}
+import java.util.UUID
 
 object item {
-
-  object ItemId extends NewType[UUID]
-  type ItemId = ItemId.Type
-
-  object ItemName extends NewType[String]
-  type ItemName = ItemId.Type
-
-  object ItemDescription extends NewType[String]
-  type ItemDescription = ItemDescription.Type
+  @newtype case class ItemId(value: UUID)
+  @newtype case class ItemName(value: String)
+  @newtype case class ItemDescription(value: String)
 
   case class Item(
       id: ItemId,
@@ -35,6 +29,6 @@ object item {
       categoryId: CategoryId
   )
 
-// NOTE: In this model the only updateable field on an item is the price (seems odd)
+// NOTE: In this model the only updatable field on an item is the price (seems odd)
   case class UpdateItem(id: ItemId, price: Money)
 }

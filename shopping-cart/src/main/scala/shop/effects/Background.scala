@@ -1,9 +1,8 @@
 package shop.effects
 
-import cats.effect.syntax.*
-import cats.syntax.all.*
 import cats.effect.Temporal
 import cats.effect.std.Supervisor
+import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -12,12 +11,13 @@ trait Background[F[_]] {
 }
 
 object Background {
-  def apply[F[_]: Background]: Background[F] = summon[Background[F]]
+  def apply[F[_]: Background]: Background[F] = implicitly
 
-  given defaultBackground[F[_]](using
+  implicit def defaultBackground[F[_]](implicit
       supervisor: Supervisor[F],
       temporal: Temporal[F]
-  ): Background[F] = new Background[F]:
+  ): Background[F] = new Background[F] {
     override def schedule[A](fa: F[A], duration: FiniteDuration): F[Unit] =
       supervisor.supervise(temporal.sleep(duration) *> fa).void
+  }
 }

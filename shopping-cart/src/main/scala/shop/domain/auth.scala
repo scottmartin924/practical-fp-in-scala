@@ -1,6 +1,8 @@
 package shop.domain
 
+import io.estatico.newtype.macros.newtype
+
 object auth {
-  object JwtToken extends NewType[String]
-  type JwtToken = JwtToken.Type
+
+  @newtype case class JwtToken(value: String)
 }

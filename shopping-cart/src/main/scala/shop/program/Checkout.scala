@@ -1,37 +1,25 @@
 package shop.program
 
-import shop.client.PaymentClient
-import shop.service.ShoppingCartService
-import shop.service.OrderService
-import cats.Monad
-import shop.domain.user.UserId
-import shop.domain.order.OrderId
-import shop.domain.payment.Card
-import cats.syntax.all.*
-import shop.domain.cart.CartItem
-import cats.data.NonEmptyList
 import cats.MonadThrow
-import org.typelevel.log4cats.Logger
-
-import scala.util.control.NoStackTrace
-import shop.program.Checkout.EmptyCartError
-import shop.domain.payment.Payment
-import shop.domain.order.PaymentId
-import retry.*
-import retry.RetryPolicies.*
-
-import concurrent.duration.*
-import shop.retry.Retry
-import shop.retry.Retriable
-import shop.domain.payment.*
-import shop.domain.payment.OrderError
-import squants.market.Money
+import cats.data.NonEmptyList
 import cats.effect.Temporal
-import retry.RetryPolicy
-import retry.RetryDetails
-import retry.RetryDetails.WillDelayAndRetry
+import cats.syntax.all._
 import org.typelevel.log4cats.Logger
+import retry.RetryPolicies._
+import retry._
+import shop.client.PaymentClient
+import shop.domain.cart.CartItem
+import shop.domain.order.{OrderId, PaymentId}
+import shop.domain.payment._
+import shop.domain.user.UserId
 import shop.effects.Background
+import shop.program.Checkout.EmptyCartError
+import shop.retry.{Retriable, Retry}
+import shop.service.{OrderService, ShoppingCartService}
+import squants.market.Money
+
+import scala.concurrent.duration._
+import scala.util.control.NoStackTrace
 
 final case class Checkout[
     F[_]: MonadThrow: Retry: Logger: Temporal: Background

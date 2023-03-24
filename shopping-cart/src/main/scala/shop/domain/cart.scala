@@ -1,14 +1,13 @@
 package shop.domain
 
+import io.estatico.newtype.macros.newtype
+import shop.domain.item.{Item, ItemId}
 import squants.market.Money
-import shop.domain.item.{ItemId, Item}
 
 object cart {
-  object Quantity extends NewType[Int]
-  type Quantity = Quantity.Type
+  @newtype case class Quantity(value: Int)
 
-  object Cart extends NewType[Map[ItemId, Quantity]]
-  type Cart = Cart.Type
+  @newtype case class Cart(items: Map[ItemId, Quantity])
 
   case class CartItem(item: Item, quantity: Quantity)
   case class CartTotal(items: List[CartItem], total: Money)
