@@ -1,12 +1,9 @@
 package example.conventions
 
-import eu.timepit.refined.api.Refined
-import eu.timepit.refined.collection.Contains
+import io.estatico.newtype.macros.newtype
 
 object Types {
-  // Opaque type means Username = String ONLY in scope defined (so in the Types object)
-  // This is raw then validation done in Username.makeUsername...could also use somethign like refined
-  opaque type Username = String
+  @newtype final case class Username(value: String)
 
   sealed trait ValidationError
   case class UsernameInvalidError(username: String, message: String)
@@ -19,17 +16,9 @@ object Types {
       val requiredValue = "@"
       Either.cond(
         s.contains(requiredValue),
-        s,
+        Username(s),
         UsernameInvalidError(s, s"Missing required character $requiredValue")
       )
     }
-  }
-
-  // Extension methods for username...these are just random samples
-  extension (u: Username) {
-    // only works b/c in this scope Username = String
-    def toString = u
-    // random thing just to show the idea
-    def name: String = u.split("@")(0)
   }
 }

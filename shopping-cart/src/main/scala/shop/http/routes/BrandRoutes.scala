@@ -5,6 +5,7 @@
 //import shop.service.BrandService
 //import org.http4s.dsl.Http4sDsl
 //import org.http4s.server.Router
+//import org.http4s.circe.CirceEntityEncoder.*
 //
 //final case class BrandRoutes[F[_]: Monad](
 //    brands: BrandService[F]
